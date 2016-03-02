@@ -8,7 +8,7 @@ $(function(){
 
         if($("#password").val() ==$("#verification").val()){
             chrome.extension.sendRequest({method:method, pwd:$("#password").val()}, function(res){
-                if(res.status=="ok") $("#msg").text("Welcome!").css("color","green")
+                if(res.ok) $("#msg").text("Welcome!").css("color","green")
             })
         }else{
             $("#msg").text("Passwords does not match!").css("color", "red");
@@ -20,8 +20,13 @@ $(function(){
         var method = alt? "setAltHotkey":"setHotkey";
         var key = e.keyCode;
         chrome.extension.sendRequest({method:method, hotkey:key},function(res){
-            if(res.status == "ok") $("#changeHotkey").val(String.fromCharCode(key))
-            else $("#msg").text("Something went awry, try again!").css("color", "red");
+            
+            if(res.ok){
+                $("#changeHotkey").val(String.fromCharCode(key));
+            }
+            else {
+                $("#msg").text(res.err).css("color", "red");
+            }
         })
     })
     //Switch to alternate settings, for setting new passwords n such.
