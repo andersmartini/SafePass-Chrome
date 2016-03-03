@@ -5,37 +5,8 @@ chrome.extension.onRequest.addListener(function(req, sender, res){
         case "getHash":
             res(createHash(req.domain));
             break;
-        case "getAltHash":
-            res(createHash(req.domain));
-            break;
+        case "signUp":
 
-        case "setPwd":
-            initialize(req.pwd);
-            res({ok:true});
-            break;
-        case "setAltPwd":
-            altpwd = req.pwd;
-            res({ok:true});
-            break;
-        case "setHotkey":
-            chrome.storage.sync.set({"hotkey":req.hotkey},function(){
-                res({ok:true})
-            });
-            break;
-        case "setAltHotKey":
-            chrome.storage.sync.set({"altHotkey":req.hotkey},function(){
-                res({ok:true})
-            });
-            break;
-        case "getHotkey":
-            chrome.storage.sync.get("hotkey",function(k){
-                res({hotkey:k});
-            })
-            break;
-        case "getAltHotkey":
-            chrome.storage.sync.get("altHotkey",function(k){
-                res({hotkey:k});
-            })
             break;
         case 'login':
             
@@ -44,7 +15,7 @@ chrome.extension.onRequest.addListener(function(req, sender, res){
     }
 })
 
-
+/*************************  UTILS  ***********************************/
 //extract interesting part of url, the part before '.com', '.org' etc..
 function parseHost(url){
     var host = tldjs.getDomain(url);
@@ -64,16 +35,38 @@ function rehash(times, obj){
     return rehash(times-1, newObj);
 }
 
+
+
+
+
+
+
+
+/***************************Dummies****************************/
+
 //dummy implementation, needs to be initialized with intialize() !
 var createHash = function(){
     return {ok:false, err:"Not initialized!"};
 }
 
+//dummy implementation needs to be initialized with connectSecrets()! 
+var getSecrets = function(){
+    return "not yet initialized!"
+}
+
+
+
+
+
+
+/*********************************INITIALIZERS************************************/
+
+
 //sets createHash to a function accepting a domain, mixing that domain with the password passed into initialize()
 
 function initialize(localPass, serverPass){
 
-    //enforce uniqueness and length on localPass, and authenticate serverPass with server.
+    //enforce uniqueness and length on localPass, and login to server.
     if( (localPass.length<6 && login(serverPass)) || localPass===serverPass){
         return{ok:false, err:"couldn't log in, verify your passwords"}
     }
@@ -94,9 +87,18 @@ function initialize(localPass, serverPass){
     }
 }
 
-//login towards server, this basicly just checks that [serverPass] is correct
 
+
+/*  
+*   login towards server, 
+*   this basicly just checks that [serverPass] and [username] is correct
+*   credentialls will still have to be sent with each request.
+*
+*   consider adding some cookie-like mechanism unless extension-specific cookies are a thing in chrome
+*   to avoid this unnesscary passing of credentials - its Risky!
+*/
 function login(user, pass, res){
+
     var xhr =new XMLHttpRequest();
     xhr.open('POST', 'http://pass-safe.herokuapp.com/login', true);
     xhr.withCredentials = true;
@@ -108,20 +110,17 @@ function login(user, pass, res){
             return true;
         }
         return false;
-        }
     }
 }
 
-//dummy implementation needs to be initialized with connectSecrets()! 
-var getSecrets = function(){
-    return "not yet initialized!"
-}
+
+
 
 //initializes adapter getSecrets with SafePass server credentials
 function connectSecrets(user, pass){
     //getSecrets promises a Secret for the given domain. 
     getSecrets = function(domain){
-        return new Promise(resolve, reject){
+        return new Promise(function(resolve, reject){
             const xhr = new XMLHttpRequest();
             xhr.open('POST', `/http://pass-safe.herokuapp.com/Secret/${domain}`, true);
             xhr.withCredentials=true;
@@ -133,7 +132,7 @@ function connectSecrets(user, pass){
                     resolve(response.Secret);
                 }
             }
-        }
+        })
     }
 }
 

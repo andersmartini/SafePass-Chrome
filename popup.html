@@ -1,12 +1,43 @@
 <script type="text/javascript" src="jsSHA-2.0.1/src/sha.js"></script>
 <script type="text/javascript" src="jquery-2.1.4.min.js"></script>
 <script type="text/javascript" src="popup.js"></script>
-<h1>Type your password </h1>
 
-<input type="hidden" name="alt" id="alt" value="" />
-<input type="password" id="password" placeholder="password"/>
-<input type="password" id="verification" placeholder="repeat password"/>
-<label for="hotkey">Hotkey:</label>
-<input type="text" id="hotkey" />
-<button id="submit">Login</button> <button id="altBtn">Change Alternative Settings</button>
+
+<div id="Login">		
+	<h1>Login to SafePass</h1>
+	<form id="loginForm">
+		<input type="text" name="username" id="username" placeholder="User Name"></input>
+		<input type="password" name="serverPass" id="serverPass" placeholder="password" />
+		<input type="password" name="localPass" id="localPass" placeholder="Master Key" />
+
+		<button type="submit" id="submit">Login</button>
+	</form>
+</div>
+
+
+<div id="Signup" class="hidden">
+	<h1>Welcome to SafePass!</h1>
+	<p>create your account now!</p>
+	<form id="signupForm">
+		<input type="text" id="username" placeholder="User Name"></input>
+		
+		<input type="password" id="ServerPass" placeholder="Choose a Password">
+		<input type="password" id="ServerPassVerif" placeholder="Repeat it...">
+
+		<input type="password" id="LocalPass" placeholder="Choose a Master Key">
+		<input type="password" id="LocalPassVerif" placeholder="And repeat it...">
+
+		<button type="submit" id="submit">SignUp</button>
+
+	</form>
+
+
+
+</div>
+
+
+
+<button type="button" id="formToggler"></button>
+
+
 <span id="msg"></span>

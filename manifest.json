@@ -21,7 +21,7 @@
   },
   "permissions": [
     "activeTab",
-    "https://pass-safe.herokuapp.com/",
+    "https://pass-safe.herokuapp.com/"
 
     ]
 }
